@@ -11,6 +11,9 @@ import {
   useUserPreferences,
 } from "./hooks/useUserPreferences";
 import { getRoutePrefix } from "../common/utils";
+import { useSelector } from "react-redux";
+import { getTopTimeData } from "./TopTime/store/localStore";
+import { updateBookingStatus } from "./TopTime/api/toptimeApi";
 
 const PostLeave = () => {
   const navigate = useNavigation();
@@ -19,6 +22,7 @@ const PostLeave = () => {
     UserPreferencesKeys.PREVIEW,
     defaultPreviewPreference
   );
+  const storedToptimeData = JSON.parse(getTopTimeData(roomId));
   return (
     <Flex direction="column" css={{ size: "100%" }}>
       <Box css={{ h: "$18", "@md": { h: "$17" } }} data-testid="header">
@@ -61,13 +65,45 @@ const PostLeave = () => {
             variant="body1"
             css={{ color: "$textMedEmp", fontWeight: "$regular" }}
           >
+            Is your call completed. If selected yes, you will not be able to
+            rejoin.
+          </Text>
+          <Button
+            style={{ backgroundColor: "green", border: "0" }}
+            onClick={() => {
+              // update status
+              const payload = {
+                bookingId: storedToptimeData.bookingId,
+                status: 5,
+              };
+              updateBookingStatus(payload, storedToptimeData.token);
+              //redirect feedback page
+            }}
+            data-testid="join_again_btn"
+          >
+            <ExitIcon />
+            <Text css={{ ml: "$3", fontWeight: "$semiBold", color: "inherit" }}>
+              Call Completed
+            </Text>
+          </Button>
+        </Flex>
+        <Flex css={{ mt: "$14", gap: "$10", alignItems: "center" }}>
+          <Text
+            variant="body1"
+            css={{ color: "$textMedEmp", fontWeight: "$regular" }}
+          >
             Left by mistake?
           </Text>
           <Button
             onClick={() => {
-              let previewUrl = "/preview/" + roomId;
-              if (role) previewUrl += "/" + role;
-              navigate(previewUrl);
+              let rejoinUrl =
+                "/" +
+                storedToptimeData.bookingId +
+                "/" +
+                role +
+                "?auth_token=" +
+                storedToptimeData.token;
+              navigate(rejoinUrl);
               ToastManager.clearAllToast();
             }}
             data-testid="join_again_btn"

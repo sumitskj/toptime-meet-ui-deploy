@@ -19,6 +19,7 @@ import {
   UI_SETTINGS,
 } from "../common/constants";
 import { getHMSTopTimeToken } from "./TopTime/api/toptimeApi";
+import { useSelector } from "react-redux";
 
 /**
  * query params exposed -
@@ -52,6 +53,7 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
   const initialName = userName || (skipPreview ? "Beam" : "");
   const previewAsRole = useSearchParam(QUERY_PARAM_PREVIEW_AS_ROLE);
   let authToken = useSearchParam(QUERY_PARAM_AUTH_TOKEN);
+  const authData = useSelector((state) => state.auth);
   //   if (authToken) {
   //     setToken(authToken);
   //     return;
@@ -90,7 +92,7 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
     const getAuthToken = async () => {
       if (userRole !== "user" && userRole !== "professional")
         throw Error("Bad Request. Role is incorrect.");
-      const tokenRes = await getHMSTopTimeToken(urlRoomId);
+      const tokenRes = await getHMSTopTimeToken(urlRoomId, authData);
       if (tokenRes.ok) {
         const tokenJson = await tokenRes.json();
         console.log("token : ", tokenJson);

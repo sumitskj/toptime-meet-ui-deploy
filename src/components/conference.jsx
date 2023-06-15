@@ -7,6 +7,7 @@ import {
   selectIsConnectedToRoom,
   selectRoomState,
   useHMSActions,
+  selectRemotePeers,
   useHMSStore,
 } from "@100mslive/react-sdk";
 import { Box, Flex } from "@100mslive/react-ui";
@@ -24,9 +25,19 @@ import {
   isIOS,
   isIPadOS,
 } from "../common/constants";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  markCallJoined,
+  updateBookingOnCallStart,
+} from "./TopTime/api/toptimeApi";
+import moment from "moment/moment";
+import { setTimerState } from "./TopTime/slice/timerControlSlice";
+import { setBookings } from "./TopTime/slice/bookingSlice";
+import { getTopTimeData, storeTopTimeData } from "./TopTime/store/localStore";
 
 const Conference = () => {
   const navigate = useNavigation();
+  const dispatch = useDispatch();
   const { roomId, role } = useParams();
   const isHeadless = useIsHeadless();
   const roomState = useHMSStore(selectRoomState);
@@ -39,6 +50,9 @@ const Conference = () => {
   const footerRef = useRef();
   const dropdownListRef = useRef();
   const performAutoHide = hideControls && (isAndroid || isIOS || isIPadOS);
+  const bookingData = useSelector(state => state.booking);
+  const authData = useSelector(state => state.auth);
+  const remotePeers = useHMSStore(selectRemotePeers);
 
   const toggleControls = e => {
     if (dropdownListRef.current?.length === 0) {
@@ -75,8 +89,8 @@ const Conference = () => {
         isConnectedToRoom
       )
     ) {
-      if (role) navigate(`/preview/${roomId || ""}/${role}`);
-      else navigate(`/preview/${roomId || ""}`);
+      const storedToptimeData = JSON.parse(getTopTimeData(roomId));
+      navigate(`/${storedToptimeData.bookingId}/${role}?auth_token=${storedToptimeData.token}`);
     }
   }, [isConnectedToRoom, prevState, roomState, navigate, role, roomId]);
 
@@ -87,13 +101,48 @@ const Conference = () => {
     }
   }, [isHeadless, hmsActions]);
 
+  useEffect(() => {
+    storeTopTimeData(roomId, { 'bookingId': bookingData.bookingId, 'token': authData });
+    if (isConnectedToRoom) {
+      // call markCallJoined
+      const callJoinedPayload = {
+        bookingId: bookingData.bookingId,
+        isUser: role === "user" ? true : false,
+      };
+      markCallJoined(callJoinedPayload, authData);
+      if (bookingData.callStartedTime !== null) {
+        console.log("setting timer active 2");
+        dispatch(setTimerState(true));
+      }
+    }
+  }, [isConnectedToRoom]);
+
+  useEffect(() => {
+    if (remotePeers !== null && remotePeers.length === 1) {
+      console.log("remote peer joined");
+      if (role === "professional") {
+        const payload = {
+          bookingId: bookingData.bookingId,
+          callStartedTime: moment().toISOString(),
+        };
+        updateBookingOnCallStart(payload, authData);
+        bookingData.callStartedTime = moment().toISOString();
+        dispatch(setBookings(bookingData));
+      }
+      if (bookingData.callStartedTime === null) {
+        console.log("setting timer active 1");
+        dispatch(setTimerState(true));
+      }
+    }
+  }, [remotePeers]);
+
   if (!isConnectedToRoom) {
     return <FullPageProgress />;
   }
 
   return (
     <Flex css={{ size: "100%", overflow: "hidden" }} direction="column">
-      {!isHeadless && (
+      {
         <Box
           ref={headerRef}
           css={{
@@ -110,7 +159,7 @@ const Conference = () => {
         >
           <Header />
         </Box>
-      )}
+      }
       <Box
         css={{
           w: "100%",

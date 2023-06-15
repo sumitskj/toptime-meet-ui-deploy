@@ -3,8 +3,11 @@ import { Flex, VerticalDivider } from "@100mslive/react-ui";
 import { Logo, SpeakerTag } from "./HeaderComponents";
 import { ParticipantCount } from "./ParticipantList";
 import { StreamActions } from "./StreamActions";
+import TopTimeTimer from "../TopTime/TopTimeTimer";
+import { selectIsConnectedToRoom, useHMSStore } from "@100mslive/react-sdk";
 
 export const ConferencingHeader = ({ isPreview }) => {
+  const isConnected = useHMSStore(selectIsConnectedToRoom);
   return (
     <Flex
       justify="between"
@@ -26,6 +29,7 @@ export const ConferencingHeader = ({ isPreview }) => {
         }}
       >
         <StreamActions />
+        {isConnected && <TopTimeTimer />}
         <ParticipantCount />
       </Flex>
     </Flex>

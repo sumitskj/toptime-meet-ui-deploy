@@ -1,7 +1,9 @@
-export const getTopTimeAuth = () => {
-  return localStorage.getItem("auth-top-time");
+export const getTopTimeData = roomId => {
+  return localStorage.getItem(roomId);
 };
 
-export const storeTopTimeAuth = data => {
-  localStorage.setItem("auth-top-time", JSON.stringify(data));
+export const storeTopTimeData = (key, val) => {
+  if (localStorage.getItem(key) === null) {
+    localStorage.setItem(key, JSON.stringify(val));
+  }
 };

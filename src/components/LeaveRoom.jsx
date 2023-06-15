@@ -32,6 +32,8 @@ import {
 import { useDropdownList } from "./hooks/useDropdownList";
 import { useNavigation } from "./hooks/useNavigation";
 import { isStreamingKit } from "../common/utils";
+import { updateBookingTimer } from "./TopTime/api/toptimeApi";
+import { useSelector } from "react-redux";
 
 export const LeaveRoom = () => {
   const navigate = useNavigation();
@@ -42,6 +44,9 @@ export const LeaveRoom = () => {
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const permissions = useHMSStore(selectPermissions);
   const hmsActions = useHMSActions();
+  const bookingData = useSelector(state => state.booking);
+  const authData = useSelector(state => state.auth);
+
   useDropdownList({ open, name: "LeaveRoom" });
 
   const redirectToLeavePage = () => {
@@ -54,6 +59,14 @@ export const LeaveRoom = () => {
   };
 
   const leaveRoom = () => {
+    if (params.role === "professional") {
+      const difference = new Date() - new Date(bookingData.callStartedTime);
+      const payload = {
+        bookingId: bookingData.bookingId,
+        callTimer: Math.floor(difference / 1000),
+      };
+      updateBookingTimer(payload, authData);
+    }
     hmsActions.leave();
     redirectToLeavePage();
   };

@@ -1,4 +1,5 @@
 import React, { Suspense, useEffect } from "react";
+import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
   HMSRoomProvider,
@@ -18,6 +19,7 @@ import { Notifications } from "./components/Notifications";
 import PostLeave from "./components/PostLeave";
 import { ToastContainer } from "./components/Toast/ToastContainer";
 import WaitingRoom from "./components/TopTime/WaitingRoom.jsx";
+import store from "./redux/store.js";
 import { hmsActions, hmsNotifications, hmsStats, hmsStore } from "./hms.js";
 import { Confetti } from "./plugins/confetti";
 import { FlyingEmoji } from "./plugins/FlyingEmoji.jsx";
@@ -225,16 +227,18 @@ function AppRoutes({ getDetails, authTokenByRoomCodeEndpoint }) {
 
 export default function App() {
   return (
-    <EdtechComponent
-      themeConfig={{
-        aspectRatio: process.env.REACT_APP_TILE_SHAPE,
-        theme: process.env.REACT_APP_THEME,
-        color: process.env.REACT_APP_COLOR,
-        logo: process.env.REACT_APP_LOGO,
-        font: process.env.REACT_APP_FONT,
-        headerPresent: process.env.REACT_APP_HEADER_PRESENT,
-        metadata: process.env.REACT_APP_DEFAULT_APP_DETAILS, // A stringified object in env
-      }}
-    />
+    <ReduxProvider store={store}>
+      <EdtechComponent
+        themeConfig={{
+          aspectRatio: process.env.REACT_APP_TILE_SHAPE,
+          theme: process.env.REACT_APP_THEME,
+          color: process.env.REACT_APP_COLOR,
+          logo: process.env.REACT_APP_LOGO,
+          font: process.env.REACT_APP_FONT,
+          headerPresent: process.env.REACT_APP_HEADER_PRESENT,
+          metadata: process.env.REACT_APP_DEFAULT_APP_DETAILS, // A stringified object in env
+        }}
+      />
+    </ReduxProvider>
   );
 }

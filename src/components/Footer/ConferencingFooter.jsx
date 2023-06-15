@@ -31,6 +31,7 @@ import { useIsFeatureEnabled } from "../hooks/useFeatures";
 import { isScreenshareSupported } from "../../common/utils";
 import { FeatureFlags } from "../../services/FeatureFlags";
 import { FEATURE_LIST } from "../../common/constants";
+import { useSelector } from "react-redux";
 
 const TranscriptionButton = React.lazy(() =>
   import("../../plugins/transcription")
@@ -85,6 +86,7 @@ const ScreenshareAudio = () => {
 
 export const ConferencingFooter = () => {
   const isMobile = useMedia(cssConfig.media.md);
+  const bookingData = useSelector(state => state.booking);
   return (
     <AppFooter.Root>
       <AppFooter.Left>
@@ -92,7 +94,9 @@ export const ConferencingFooter = () => {
         <Playlist type={HMSPlaylistType.audio} />
         <Playlist type={HMSPlaylistType.video} />
         {FeatureFlags.enableWhiteboard ? <ToggleWhiteboard /> : null}
-        <VirtualBackground />
+        {bookingData !== null &&
+          bookingData !== {} &&
+          bookingData.bookingType === 1 && <VirtualBackground />}
         <NoiseSuppression />
         {FeatureFlags.enableTranscription ? <TranscriptionButton /> : null}
         <Flex
@@ -111,7 +115,9 @@ export const ConferencingFooter = () => {
       </AppFooter.Left>
       <AppFooter.Center>
         <AudioVideoToggle />
-        <ScreenshareToggle />
+        {bookingData !== null &&
+          bookingData !== {} &&
+          bookingData.bookingType === 1 && <ScreenshareToggle />}
         {/* <PIP /> */}
         <MoreSettings />
         <Flex

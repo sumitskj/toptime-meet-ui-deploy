@@ -18,6 +18,7 @@ import { Tooltip } from "@100mslive/react-ui";
 import { ToastManager } from "./Toast/ToastManager";
 import IconButton from "../IconButton";
 import { isMacOS } from "../common/constants";
+import { useSelector } from "react-redux";
 
 export const AudioVideoToggle = () => {
   const { isLocalVideoEnabled, isLocalAudioEnabled, toggleAudio, toggleVideo } =
@@ -26,6 +27,7 @@ export const AudioVideoToggle = () => {
   const videoTracKId = useHMSStore(selectLocalVideoTrackID);
   const localVideoTrack = useHMSStore(selectVideoTrackByID(videoTracKId));
   const isConnectedToRoom = useHMSStore(selectIsConnectedToRoom);
+  const bookingData = useSelector(state => state.booking);
 
   return (
     <Fragment>
@@ -49,7 +51,10 @@ export const AudioVideoToggle = () => {
           </IconButton>
         </Tooltip>
       ) : null}
-      {toggleVideo ? (
+      {toggleVideo &&
+      bookingData !== null &&
+      bookingData !== {} &&
+      bookingData.bookingType === 1 ? (
         <Tooltip
           title={`Turn ${isLocalVideoEnabled ? "off" : "on"} video (${
             isMacOS ? "⌘" : "ctrl"

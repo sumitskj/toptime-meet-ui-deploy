@@ -15,10 +15,10 @@ import {
   QUERY_PARAM_AUTH_TOKEN,
   QUERY_PARAM_NAME,
   QUERY_PARAM_PREVIEW_AS_ROLE,
-  QUERY_PARAM_SKIP_PREVIEW,
   QUERY_PARAM_SKIP_PREVIEW_HEADFUL,
   UI_SETTINGS,
 } from "../common/constants";
+import { getHMSTopTimeToken } from "./TopTime/api/toptimeApi";
 
 /**
  * query params exposed -
@@ -36,12 +36,12 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
   const hmsActions = useHMSActions();
   const tokenEndpoint = useTokenEndpoint();
   const [, setIsHeadless] = useSetUiSettings(UI_SETTINGS.isHeadless);
-  const { roomId: urlRoomId, role: userRole } = useParams(); // from the url
+  const { roomId: urlRoomId, role: userRole, name: userName } = useParams(); // from the url
   const [token, setToken] = useState(null);
   const [error, setError] = useState({ title: "", body: "" });
   // way to skip preview for automated tests, beam recording and streaming
   const beamInToken = useSearchParam("token") === "beam_recording"; // old format to remove
-  let skipPreview = useSearchParam(QUERY_PARAM_SKIP_PREVIEW) === "true";
+  let skipPreview = true;
   // use this field to join directly for quick testing while in local
   const directJoinHeadfulFromEnv =
     process.env.REACT_APP_HEADLESS_JOIN === "true";
@@ -49,43 +49,59 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
     useSearchParam(QUERY_PARAM_SKIP_PREVIEW_HEADFUL) === "true" ||
     directJoinHeadfulFromEnv;
   skipPreview = skipPreview || beamInToken || directJoinHeadful;
-  const initialName =
-    useSearchParam(QUERY_PARAM_NAME) || (skipPreview ? "Beam" : "");
+  const initialName = userName || (skipPreview ? "Beam" : "");
   const previewAsRole = useSearchParam(QUERY_PARAM_PREVIEW_AS_ROLE);
   let authToken = useSearchParam(QUERY_PARAM_AUTH_TOKEN);
+  //   if (authToken) {
+  //     setToken(authToken);
+  //     return;
+  //   }
+  //   if (!tokenEndpoint || !urlRoomId) {
+  //     return;
+  //   }
+  //   const roomCode = !userRole && urlRoomId;
+
+  //   const getTokenFn = roomCode
+  //     ? () =>
+  //         hmsActions.getAuthTokenByRoomCode(
+  //           { roomCode },
+  //           { endpoint: authTokenByRoomCodeEndpoint }
+  //         )
+  //     : () => getToken(tokenEndpoint, uuid(), userRole, urlRoomId);
+
+  //   getTokenFn()
+  //     .then(token => {
+  //       console.log("direct token ", token);
+  //       setToken(token);
+  //     })
+  //     .catch(error => {
+  //       setError(convertPreviewError(error));
+  //     });
+  // }, [
+  //   hmsActions,
+  //   tokenEndpoint,
+  //   urlRoomId,
+  //   userRole,
+  //   authToken,
+  //   authTokenByRoomCodeEndpoint,
+  // ]);
+
   useEffect(() => {
-    if (authToken) {
-      setToken(authToken);
-      return;
-    }
-    if (!tokenEndpoint || !urlRoomId) {
-      return;
-    }
-    const roomCode = !userRole && urlRoomId;
-
-    const getTokenFn = roomCode
-      ? () =>
-          hmsActions.getAuthTokenByRoomCode(
-            { roomCode },
-            { endpoint: authTokenByRoomCodeEndpoint }
-          )
-      : () => getToken(tokenEndpoint, uuid(), userRole, urlRoomId);
-
-    getTokenFn()
-      .then(token => {
-        setToken(token);
-      })
-      .catch(error => {
-        setError(convertPreviewError(error));
-      });
-  }, [
-    hmsActions,
-    tokenEndpoint,
-    urlRoomId,
-    userRole,
-    authToken,
-    authTokenByRoomCodeEndpoint,
-  ]);
+    const getAuthToken = async () => {
+      if (userRole !== "user" && userRole !== "professional")
+        throw Error("Bad Request. Role is incorrect.");
+      const tokenRes = await getHMSTopTimeToken(urlRoomId);
+      if (tokenRes.ok) {
+        const tokenJson = await tokenRes.json();
+        console.log("token : ", tokenJson);
+        setToken(tokenJson["value"]);
+      }
+    };
+    getAuthToken().catch(err => {
+      console.error("error in fetching auth token ", err);
+      setError(err.status);
+    });
+  }, [hmsActions, authToken]);
 
   const onJoin = () => {
     !directJoinHeadful && setIsHeadless(skipPreview);

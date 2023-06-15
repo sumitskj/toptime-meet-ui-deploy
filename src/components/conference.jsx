@@ -124,7 +124,7 @@ const Conference = () => {
       >
         <ConferenceMainView />
       </Box>
-      {!isHeadless && (
+      {
         <Box
           ref={footerRef}
           css={{
@@ -142,7 +142,7 @@ const Conference = () => {
         >
           <Footer />
         </Box>
-      )}
+      }
       <RoleChangeRequestModal />
     </Flex>
   );

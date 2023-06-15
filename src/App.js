@@ -1,11 +1,5 @@
 import React, { Suspense, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Navigate,
-  Route,
-  Routes,
-  useParams,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
   HMSRoomProvider,
   selectIsConnectedToRoom,
@@ -23,11 +17,12 @@ import { KeyboardHandler } from "./components/Input/KeyboardInputManager";
 import { Notifications } from "./components/Notifications";
 import PostLeave from "./components/PostLeave";
 import { ToastContainer } from "./components/Toast/ToastContainer";
+import WaitingRoom from "./components/TopTime/WaitingRoom.jsx";
 import { hmsActions, hmsNotifications, hmsStats, hmsStore } from "./hms.js";
 import { Confetti } from "./plugins/confetti";
 import { FlyingEmoji } from "./plugins/FlyingEmoji.jsx";
 import { RemoteStopScreenshare } from "./plugins/RemoteStopScreenshare";
-import { getRoutePrefix, shadeColor } from "./common/utils";
+import { shadeColor } from "./common/utils";
 import { FeatureFlags } from "./services/FeatureFlags";
 import "./base.css";
 import "./index.css";
@@ -133,45 +128,12 @@ export function EdtechComponent({
   );
 }
 
-const RedirectToPreview = ({ getDetails }) => {
-  const { roomId, role } = useParams();
-  useEffect(() => {
-    getDetails();
-  }, [roomId]); //eslint-disable-line
-
-  console.error({ roomId, role });
-
-  if (!roomId && !role) {
-    return <Navigate to="/" />;
-  }
-  if (!roomId) {
-    return <Navigate to="/" />;
-  }
-  if (["streaming", "preview", "meeting", "leave"].includes(roomId) && !role) {
-    return <Navigate to="/" />;
-  }
-
-  return (
-    <Navigate to={`${getRoutePrefix()}/preview/${roomId}/${role || ""}`} />
-  );
-};
-
 const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
   return (
     <Routes>
       <Route path="preview">
         <Route
-          path=":roomId/:role"
-          element={
-            <Suspense fallback={<FullPageProgress />}>
-              <PreviewScreen
-                authTokenByRoomCodeEndpoint={authTokenByRoomCodeEndpoint}
-              />
-            </Suspense>
-          }
-        />
-        <Route
-          path=":roomId"
+          path=":roomId/:role/:name"
           element={
             <Suspense fallback={<FullPageProgress />}>
               <PreviewScreen
@@ -203,14 +165,7 @@ const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
         <Route path=":roomId/:role" element={<PostLeave />} />
         <Route path=":roomId" element={<PostLeave />} />
       </Route>
-      <Route
-        path="/:roomId/:role"
-        element={<RedirectToPreview getDetails={getDetails} />}
-      />
-      <Route
-        path="/:roomId/"
-        element={<RedirectToPreview getDetails={getDetails} />}
-      />
+      <Route path="/:bookingId/:role" element={<WaitingRoom />} />
       <Route path="*" element={<ErrorPage error="Invalid URL!" />} />
     </Routes>
   );

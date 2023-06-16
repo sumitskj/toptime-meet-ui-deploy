@@ -54,40 +54,7 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
   const previewAsRole = useSearchParam(QUERY_PARAM_PREVIEW_AS_ROLE);
   let authToken = useSearchParam(QUERY_PARAM_AUTH_TOKEN);
   const authData = useSelector((state) => state.auth);
-  //   if (authToken) {
-  //     setToken(authToken);
-  //     return;
-  //   }
-  //   if (!tokenEndpoint || !urlRoomId) {
-  //     return;
-  //   }
-  //   const roomCode = !userRole && urlRoomId;
-
-  //   const getTokenFn = roomCode
-  //     ? () =>
-  //         hmsActions.getAuthTokenByRoomCode(
-  //           { roomCode },
-  //           { endpoint: authTokenByRoomCodeEndpoint }
-  //         )
-  //     : () => getToken(tokenEndpoint, uuid(), userRole, urlRoomId);
-
-  //   getTokenFn()
-  //     .then(token => {
-  //       console.log("direct token ", token);
-  //       setToken(token);
-  //     })
-  //     .catch(error => {
-  //       setError(convertPreviewError(error));
-  //     });
-  // }, [
-  //   hmsActions,
-  //   tokenEndpoint,
-  //   urlRoomId,
-  //   userRole,
-  //   authToken,
-  //   authTokenByRoomCodeEndpoint,
-  // ]);
-
+  
   useEffect(() => {
     const getAuthToken = async () => {
       if (userRole !== "user" && userRole !== "professional")
@@ -95,7 +62,6 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
       const tokenRes = await getHMSTopTimeToken(urlRoomId, authData);
       if (tokenRes.ok) {
         const tokenJson = await tokenRes.json();
-        console.log("token : ", tokenJson);
         setToken(tokenJson["value"]);
       }
     };

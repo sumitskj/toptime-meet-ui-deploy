@@ -116,7 +116,6 @@ const Conference = () => {
       };
       markCallJoined(callJoinedPayload, authData);
       if (bookingData.callStartedTime !== null) {
-        console.log("setting timer active 2");
         dispatch(setTimerState(true));
       }
     }
@@ -136,7 +135,6 @@ const Conference = () => {
         dispatch(setBookings(tmp));
       }
       if (bookingData.callStartedTime === null) {
-        console.log("setting timer active 1");
         dispatch(setTimerState(true));
       }
     }

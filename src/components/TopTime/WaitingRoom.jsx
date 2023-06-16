@@ -47,7 +47,7 @@ const WaitingRoom = () => {
       if (userRole === "professional") {
         setName(booking.professionalFirstName);
       }
-      console.log("bkd ", booking);
+      console.log("booking ", booking);
       const timer = setInterval(() => {
         setTimeLeft(calculateTimeLeft(new Date(booking.finalBookingTime)));
       }, 1000);
@@ -57,7 +57,6 @@ const WaitingRoom = () => {
 
   const calculateTimeLeft = target => {
     let difference = target - new Date();
-    console.log("f ", target, " cur ", new Date(), " diff ", difference);
     let timeLeft = {};
     if (difference > 0) {
       timeLeft = {

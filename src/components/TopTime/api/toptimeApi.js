@@ -19,7 +19,6 @@ const fetchWithRetry = async (url, options) => {
 
 const getBookingDetails = async (bookingId, authToken) => {
   try {
-    console.log("AA ", authToken);
     const response = await fetchWithRetry(
       `${process.env.REACT_APP_TOPTIME_BACKEND_URI}/api/v1/booking?bookingId=${bookingId}`,
       {

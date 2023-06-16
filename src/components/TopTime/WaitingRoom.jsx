@@ -74,6 +74,7 @@ const WaitingRoom = () => {
     color: "#2f80e1",
   });
 
+  
   return (
     <>
       {error !== null && (

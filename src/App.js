@@ -136,7 +136,7 @@ const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
     <Routes>
       <Route path="/preview">
         <Route
-          path="/:roomId/:role/:name"
+          path=":roomId/:role/:name"
           element={
             <Suspense fallback={<FullPageProgress />}>
               <PreviewScreen
@@ -148,7 +148,7 @@ const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
       </Route>
       <Route path="/meeting">
         <Route
-          path="/:roomId/:role"
+          path=":roomId/:role"
           element={
             <Suspense fallback={<FullPageProgress />}>
               <Conference />
@@ -156,7 +156,7 @@ const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
           }
         />
         <Route
-          path="/:roomId"
+          path=":roomId"
           element={
             <Suspense fallback={<FullPageProgress />}>
               <Conference />
@@ -165,8 +165,8 @@ const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
         />
       </Route>
       <Route path="/leave">
-        <Route path="/:roomId/:role" element={<PostLeave />} />
-        <Route path="/:roomId" element={<PostLeave />} />
+        <Route path=":roomId/:role" element={<PostLeave />} />
+        <Route path=":roomId" element={<PostLeave />} />
       </Route>
       <Route path="/:bookingId/:role" element={<WaitingRoom />} />
       <Route path="/thanks" element={<ThanksPage />} />

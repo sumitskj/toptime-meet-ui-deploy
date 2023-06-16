@@ -79,7 +79,7 @@ const WaitingRoom = () => {
     <>
       {error !== null && (
         <ErrorDialog title={"Error"}>
-          You accessed an unauthorised resource. Please first authenticate
+          Error in loading page. Please try refreshing page again. If issue persist then you may have accessed an unauthorised resource. Please first authenticate
           yourself at{" "}
           <Link target="_blank" href={loginUrl} rel="noreferrer">
             Login

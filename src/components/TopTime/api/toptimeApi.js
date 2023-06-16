@@ -164,6 +164,32 @@ const updateBookingTimer = async (payload, authToken) => {
   }
 };
 
+const submitFeedback = async (payload, authToken) => {
+  try {
+    const response = await fetchWithRetry(
+      `${process.env.REACT_APP_TOPTIME_BACKEND_URI}/api/v1/booking/addCallFeedback`,
+      {
+        method: "PUT",
+        headers: {
+          "auth-token": authToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      let error = new Error("Request failed!");
+      error.response = response;
+      throw error;
+    }
+    return response;
+  } catch (err) {
+    console.error(err);
+    throw new Error(err);
+  }
+};
+
 export {
   getHMSTopTimeToken,
   getBookingDetails,
@@ -171,4 +197,5 @@ export {
   updateBookingStatus,
   markCallJoined,
   updateBookingTimer,
+  submitFeedback,
 };

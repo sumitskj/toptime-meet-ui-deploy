@@ -90,7 +90,9 @@ const Conference = () => {
       )
     ) {
       const storedToptimeData = JSON.parse(getTopTimeData(roomId));
-      navigate(`/${storedToptimeData.bookingId}/${role}?auth_token=${storedToptimeData.token}`);
+      navigate(
+        `/${storedToptimeData.bookingId}/${role}?auth_token=${storedToptimeData.token}`
+      );
     }
   }, [isConnectedToRoom, prevState, roomState, navigate, role, roomId]);
 
@@ -102,7 +104,10 @@ const Conference = () => {
   }, [isHeadless, hmsActions]);
 
   useEffect(() => {
-    storeTopTimeData(roomId, { 'bookingId': bookingData.bookingId, 'token': authData });
+    storeTopTimeData(roomId, {
+      bookingId: bookingData.bookingId,
+      token: authData,
+    });
     if (isConnectedToRoom) {
       // call markCallJoined
       const callJoinedPayload = {
@@ -126,8 +131,9 @@ const Conference = () => {
           callStartedTime: moment().toISOString(),
         };
         updateBookingOnCallStart(payload, authData);
-        bookingData.callStartedTime = moment().toISOString();
-        dispatch(setBookings(bookingData));
+        let tmp = JSON.parse(JSON.stringify(bookingData));
+        tmp.callStartedTime = moment().toISOString();
+        dispatch(setBookings(tmp));
       }
       if (bookingData.callStartedTime === null) {
         console.log("setting timer active 1");

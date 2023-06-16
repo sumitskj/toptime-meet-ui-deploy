@@ -5,12 +5,13 @@ const TopTimeTimer = () => {
   const timerState = useSelector(state => state.timer);
   const bookingData = useSelector(state => state.booking);
   const [curTimer, setCurTimer] = useState(null);
-  let startTime = null, alreadyElapsed = 0;
+  let startTime = null,
+    alreadyElapsed = 0;
 
   const calculateTimeLeft = () => {
     const elapsed = new Date() - startTime + alreadyElapsed;
     let timeLeft = {
-      minutes: Math.floor((elapsed / 1000 / 60) % 60),
+      minutes: Math.floor(elapsed / 1000 / 60),
       seconds: Math.floor((elapsed / 1000) % 60),
     };
     console.log("Elapsed time : ", timeLeft);
@@ -37,17 +38,18 @@ const TopTimeTimer = () => {
         <div
           style={{
             color: "white",
-            backgroundColor: "#0A0E0F",
+            backgroundColor:
+              bookingData.duration < curTimer.minutes ? "red" : "#0A0E0F",
             borderRadius: "10px",
             padding: "4px",
-            border: "1px solid white"
+            border: "1px solid white",
           }}
         >
-          {curTimer.minutes +
+          {curTimer.minutes.toString().padStart(2, "0") +
             ":" +
-            curTimer.seconds +
+            curTimer.seconds.toString().padStart(2, "0") +
             "/" +
-            bookingData.duration +
+            bookingData.duration.toString().padStart(2, "0") +
             ":00"}
         </div>
       )}

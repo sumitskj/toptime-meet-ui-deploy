@@ -18,6 +18,7 @@ import { KeyboardHandler } from "./components/Input/KeyboardInputManager";
 import { Notifications } from "./components/Notifications";
 import PostLeave from "./components/PostLeave";
 import { ToastContainer } from "./components/Toast/ToastContainer";
+import ThanksPage from "./components/TopTime/ThanksPage.jsx";
 import WaitingRoom from "./components/TopTime/WaitingRoom.jsx";
 import store from "./redux/store.js";
 import { hmsActions, hmsNotifications, hmsStats, hmsStore } from "./hms.js";
@@ -168,6 +169,7 @@ const RouteList = ({ getDetails, authTokenByRoomCodeEndpoint }) => {
         <Route path=":roomId" element={<PostLeave />} />
       </Route>
       <Route path="/:bookingId/:role" element={<WaitingRoom />} />
+      <Route path="/thanks" element={<ThanksPage />} />
       <Route path="*" element={<ErrorPage error="Invalid URL!" />} />
     </Routes>
   );

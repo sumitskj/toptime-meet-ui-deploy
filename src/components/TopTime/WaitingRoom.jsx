@@ -14,7 +14,6 @@ const WaitingRoom = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { bookingId: bookingId, role: userRole } = useParams(); // from the url
-  const [name, setName] = useState("");
   const [error, setError] = useState(null);
   const [booking, setBooking] = useState(null);
   const loginUrl = process.env.REACT_APP_TOPTIME_UI_URI + "/login";
@@ -40,22 +39,23 @@ const WaitingRoom = () => {
   }, []);
 
   useEffect(() => {
+    let name = '';
     if (booking !== null) {
       if (userRole === "user") {
-        setName(booking.userFirstName);
+        name = booking.userFirstName;
       }
       if (userRole === "professional") {
-        setName(booking.professionalFirstName);
+        name = booking.professionalFirstName;
       }
       console.log("booking ", booking);
       const timer = setInterval(() => {
-        setTimeLeft(calculateTimeLeft(new Date(booking.finalBookingTime)));
+        setTimeLeft(calculateTimeLeft(new Date(booking.finalBookingTime), name));
       }, 1000);
       return () => clearInterval(timer);
     }
   }, [booking]);
 
-  const calculateTimeLeft = target => {
+  const calculateTimeLeft = (target, name) => {
     let difference = target - new Date();
     let timeLeft = {};
     if (difference > 0) {
@@ -74,7 +74,7 @@ const WaitingRoom = () => {
     color: "#2f80e1",
   });
 
-  
+
   return (
     <>
       {error !== null && (

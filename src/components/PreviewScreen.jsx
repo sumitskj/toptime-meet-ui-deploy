@@ -10,10 +10,8 @@ import { ErrorDialog } from "../primitives/DialogContent";
 import { Header } from "./Header";
 import { useSetUiSettings, useTokenEndpoint } from "./AppData/useUISettings";
 import { useNavigation } from "./hooks/useNavigation";
-import getToken from "../services/tokenService";
 import {
   QUERY_PARAM_AUTH_TOKEN,
-  QUERY_PARAM_NAME,
   QUERY_PARAM_PREVIEW_AS_ROLE,
   QUERY_PARAM_SKIP_PREVIEW_HEADFUL,
   UI_SETTINGS,
@@ -50,7 +48,7 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
     useSearchParam(QUERY_PARAM_SKIP_PREVIEW_HEADFUL) === "true" ||
     directJoinHeadfulFromEnv;
   skipPreview = skipPreview || beamInToken || directJoinHeadful;
-  const initialName = userName || (skipPreview ? "Beam" : "");
+  const initialName = role === 'user' ? 'Beam' : userName;
   const previewAsRole = useSearchParam(QUERY_PARAM_PREVIEW_AS_ROLE);
   let authToken = useSearchParam(QUERY_PARAM_AUTH_TOKEN);
   const authData = useSelector((state) => state.auth);

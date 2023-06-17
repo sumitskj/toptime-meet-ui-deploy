@@ -14,7 +14,7 @@ const TopTimeTimer = () => {
       minutes: Math.floor(elapsed / 1000 / 60),
       seconds: Math.floor((elapsed / 1000) % 60),
     };
-    console.log("Elapsed time : ", timeLeft);
+    // console.log("Elapsed time : ", timeLeft);
     return timeLeft;
   };
 

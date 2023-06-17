@@ -72,13 +72,9 @@ export const ChatFooter = ({ role, peerId, onSend, children }) => {
       return;
     }
     try {
-      if (role) {
-        await hmsActions.sendGroupMessage(message, [role]);
-      } else if (peerId) {
-        await hmsActions.sendDirectMessage(message, peerId);
-      } else {
-        await hmsActions.sendBroadcastMessage(message);
-      }
+      console.log("send ", message);
+      const a = await hmsActions.sendBroadcastMessage(message);
+      console.log("aa ", a);
       inputRef.current.value = "";
       setTimeout(() => {
         onSend();

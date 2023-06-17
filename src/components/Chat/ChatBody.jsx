@@ -374,12 +374,9 @@ const VirtualizedChatMessages = React.forwardRef(
 
 export const ChatBody = React.forwardRef(
   ({ role, peerId, scrollToBottom }, listRef) => {
-    const storeMessageSelector = role
-      ? selectMessagesByRole(role)
-      : peerId
-      ? selectMessagesByPeerID(peerId)
-      : selectHMSMessages;
-    const messages = useHMSStore(storeMessageSelector) || [];
+    const storeMessageSelector = selectHMSMessages;
+    const messages = useHMSStore(selectHMSMessages);
+    console.log('MEss : ', messages);
 
     if (messages.length === 0) {
       return (

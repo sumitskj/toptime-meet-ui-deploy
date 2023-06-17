@@ -98,7 +98,8 @@ const Conference = () => {
 
   useEffect(() => {
     // beam doesn't need to store messages, saves on unnecessary store updates in large calls
-    if (isHeadless) {
+    console.log("headless : ", isHeadless);
+    if (false) {
       hmsActions.ignoreMessageTypes(["chat", EMOJI_REACTION_TYPE]);
     }
   }, [isHeadless, hmsActions]);
@@ -131,7 +132,9 @@ const Conference = () => {
         };
         updateBookingOnCallStart(payload, authData);
         let tmp = JSON.parse(JSON.stringify(bookingData));
-        tmp.callStartedTime = moment().toISOString();
+        if(tmp.callStartedTime === null){
+          tmp.callStartedTime = moment().toISOString();
+        }
         dispatch(setBookings(tmp));
       }
       if (bookingData.callStartedTime === null) {

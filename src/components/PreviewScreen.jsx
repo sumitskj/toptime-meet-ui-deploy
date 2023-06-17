@@ -48,7 +48,7 @@ const PreviewScreen = React.memo(({ authTokenByRoomCodeEndpoint }) => {
     useSearchParam(QUERY_PARAM_SKIP_PREVIEW_HEADFUL) === "true" ||
     directJoinHeadfulFromEnv;
   skipPreview = skipPreview || beamInToken || directJoinHeadful;
-  const initialName = role === 'user' ? 'Beam' : userName;
+  const initialName = userRole === 'user' ? 'Beam' : userName;
   const previewAsRole = useSearchParam(QUERY_PARAM_PREVIEW_AS_ROLE);
   let authToken = useSearchParam(QUERY_PARAM_AUTH_TOKEN);
   const authData = useSelector((state) => state.auth);

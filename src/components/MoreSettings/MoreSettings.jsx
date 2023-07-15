@@ -75,7 +75,7 @@ export const MoreSettings = () => {
   const enablHlsStats = useHMSStore(selectAppData(APP_DATA.hlsStats));
   const isMobile = useMedia(cssConfig.media.md);
   const { isBrowserRecordingOn } = useRecordingStreaming();
-  const isChangeNameEnabled = useIsFeatureEnabled(FEATURE_LIST.CHANGE_NAME);
+  const isChangeNameEnabled = false;
   const isEmbedEnabled = useIsFeatureEnabled(FEATURE_LIST.EMBED_URL);
   const isSFNEnabled = useIsFeatureEnabled(FEATURE_LIST.STARTS_FOR_NERDS);
   const [openModals, setOpenModals] = useState(new Set());
